@@ -49,14 +49,39 @@ module makeCorrect (input  logic [12:0] codeWord,
 
 endmodule:makeCorrect
 
-module errorCheck (input  logic globalParity,
-                   input  logic [3:0] syndrome,
-                   output logic is1BitErr, is2BitErr);
   
-  if (globalParity === 0 && syndrome === 4'b0000)
-    assign is1BitErr = 0;
-    assign is2BitErr = 0;
-  if (globalParity )
+module errorCheck
+  (input [12:0] inCode,
+   input [3:0] syndrome,
+   output is1BitErr,
+   output is2BitErr);
+
+  logic PGfail;
+
+  makeSyndrome DUT (.codeWord(inCode), .syndrome(syndrome));
+
+  assign isEven = ^inCode;  //if it is even, PG fails
+  assign PGfail = isEven;
+
+  always_comb begin
+    if (~PGfail & syndrome = 0)
+      begin
+        assign is1BitErr = false;
+        assign is2BitErr = false;
+      end
+    else if (PGfail) // 1 bit error, either in the PG or normal bit
+      begin
+         assign is1BitErr = true;
+         assign is2BitErr = false;
+      end
+    else if (~PGfail & syndrome != 0):  // 2bits errors
+      begin
+        assign is1BitErr = false;
+        assign is2BitErr = true;
+    end
+  end
+
+endmodule : errorCheck
 
 
 logic [12:0] temp;
