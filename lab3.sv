@@ -56,7 +56,7 @@ module errorCheck
    output is1BitErr,
    output is2BitErr);
 
-  logic PGfail;
+  logic isEven, PGfail;
 
   makeSyndrome DUT (.codeWord(inCode), .syndrome(syndrome));
 
