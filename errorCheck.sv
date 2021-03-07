@@ -32,6 +32,21 @@ module makeCorrect (input  logic [12:0] codeWord,
                     input  logic [3:0] syndrome,
                     output logic [12:0] correctCodeWord);
 
+  logic PGfail;
+
+  assign correctCodeWord = codeWord;
+
+  assign PGfail = ^codeWord;
+
+  always_comb begin
+
+  if (PGfail === 1 && syndrome !== 4'b0000)
+    correctCodeWord[syndrome] = ~codeWord[syndrome];
+
+  else if (PGfail === 1 && syndrome === 4'b0000)
+    assign correctCodeWord[0] = ~codeWord[0];
+
+  end
 
 endmodule:makeCorrect
 
