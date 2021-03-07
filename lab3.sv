@@ -1,7 +1,5 @@
 `default_nettype none
 
-`default_nettype none
-
 module SECDEDdecoder (input  logic [12:0] inCode,
                       output logic [3:0] syndrome,
                       output logic is1BitErr, is2BitErr, 
