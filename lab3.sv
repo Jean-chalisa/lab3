@@ -11,7 +11,7 @@ makeSyndrome dut1 (.codeWord(inCode), .*);
 makeCorrect dut2 ( .codeWord(inCode), .syndrome(syndrome),
                    .correctCode(corrected));
 
-  errorCheck dut2 ( .i*)
+  errorCheck dut2 ( .*)
 
 
 
