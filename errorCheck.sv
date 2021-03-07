@@ -12,17 +12,17 @@ endmodule:  SECDEDdecoder
 module makeSyndrome (input  logic [12:0] codeWord,
                      output logic [3:0] syndrome);
 
-  assign syndrome[0] = codeWord[1] ^ codeWord[3] ^ codeWord[5] ^ codeWord[7] ^
-                       codeWord[9] ^ codeWord[11];
+  assign syndrome[0] = codeWord[1] ^ codeWord[3] ^ codeWord[5] ^ 
+                       codeWord[7] ^ codeWord[9] ^ codeWord[11];
                        
-  assign syndrome[1] = codeWord[2] ^ codeWord[3] ^ codeWord[6] ^ codeWord[7] ^
-                       codeWord[10] ^ codeWord[11];
+  assign syndrome[1] = codeWord[2] ^ codeWord[3] ^ codeWord[6] ^ 
+                       codeWord[7] ^ codeWord[10] ^ codeWord[11];
 
-  assign syndrome[2] = codeWord[4] ^ codeWord[5] ^ codeWord[6] ^ codeWord[7] ^
-                       codeWord[12];
+  assign syndrome[2] = codeWord[4] ^ codeWord[5] ^ codeWord[6] ^ 
+                       codeWord[7] ^ codeWord[12];
                        
-  assign syndrome[3] = codeWord[8] ^ codeWord[9] ^ codeWord[10] ^ codeWord[11] ^
-                       codeWord[12];
+  assign syndrome[3] = codeWord[8] ^ codeWord[9] ^ codeWord[10] ^ 
+                       codeWord[11] ^ codeWord[12];
                        
 
 endmodule: makeSyndrome
@@ -34,11 +34,13 @@ module makeCorrect (input  logic [12:0] codeWord,
 
   logic PGfail;
 
-  assign correctCodeWord = codeWord;
+
 
   assign PGfail = ^codeWord;
 
   always_comb begin
+
+  assign correctCodeWord = codeWord;
 
   if (PGfail === 1 && syndrome !== 4'b0000)
     correctCodeWord[syndrome] = ~codeWord[syndrome];
@@ -49,6 +51,7 @@ module makeCorrect (input  logic [12:0] codeWord,
   end
 
 endmodule:makeCorrect
+
 module errorCheck
   (input [12:0] inCode,
    input [3:0] syndrome,
@@ -63,7 +66,7 @@ module errorCheck
   assign PGfail = isEven;
 
   always_comb begin
-    if (~PGfail & syndrome = 0)
+    if (~PGfail && syndrome === 4'b0000)
       begin
         assign is1BitErr = false;
         assign is2BitErr = false;
@@ -73,13 +76,13 @@ module errorCheck
          assign is1BitErr = true;
          assign is2BitErr = false;
       end
-    else if (~PGfail & syndrome != 0):  // 2bits errors
+    else if (~PGfail & syndrome !== 4'b0000):  // 2bits errors
       begin
         assign is1BitErr = false;
         assign is2BitErr = true;
-    end
+      end
   end
 
-endmodule : errorCheck
+endmodule: errorCheck
 
 
