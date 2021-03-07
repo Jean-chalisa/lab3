@@ -41,18 +41,19 @@ module makeCorrect (input  logic [12:0] codeWord,
                     input  logic [3:0] syndrome,
                     output logic [12:0] correctCodeWord);
 
+  logic PGfail;
+
+  assign PGfail = ^codeWord;
+
   always_comb begin
 
   assign correctCodeWord = codeWord;
 
-  //if (inCode[0] === 1 && syndrome !== 4'b0000)
-  //  correctCodeWord[syndrome] = ~codeWord[syndrome];
+  if (PGfail === 1 && syndrome !== 4'b0000)
+    correctCodeWord[syndrome] = ~codeWord[syndrome];
 
-  //else if (inCode[0] === 1 && syndrome === 4'b0000)
-  //  assign correctCodeWord[0] = 0;
-    
-  //else if (inCode[0] === 0 && syndrome !== 4'b0000)
-  //  assign correctCodeWord = codeWord;
+  else if (PGfail === 1 && syndrome === 4'b0000)
+    assign correctCodeWord[0] = ~codeWord[0];
 
   end
 
@@ -74,7 +75,7 @@ module errorCheck
   assign PGfail = isEven;
 
   always_comb begin
-    if (~PGfail & syndrome = 0)
+    if (~PGfail && syndrome === 4'b0000)
       begin
         assign is1BitErr = false;
         assign is2BitErr = false;
@@ -84,7 +85,7 @@ module errorCheck
          assign is1BitErr = true;
          assign is2BitErr = false;
       end
-    else if (~PGfail & syndrome != 0):  // 2bits errors
+    else if (~PGfail && syndrome !== 4'b0000):  // 2bits errors
       begin
         assign is1BitErr = false;
         assign is2BitErr = true;
