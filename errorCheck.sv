@@ -34,8 +34,6 @@ module makeCorrect (input  logic [12:0] codeWord,
 
   logic PGfail;
 
-
-
   assign PGfail = ^codeWord;
 
   always_comb begin
