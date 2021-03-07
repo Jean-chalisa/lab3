@@ -49,14 +49,13 @@ module makeCorrect (input  logic [12:0] codeWord,
   end
 
 endmodule:makeCorrect
-
 module errorCheck
   (input [12:0] inCode,
    input [3:0] syndrome,
    output is1BitErr,
    output is2BitErr);
 
-  logic PGfail;
+  logic isEven, PGfail;
 
   makeSyndrome DUT (.codeWord(inCode), .syndrome(syndrome));
 
@@ -78,7 +77,8 @@ module errorCheck
       begin
         assign is1BitErr = false;
         assign is2BitErr = true;
-    end     
+    end
+  end
 
 endmodule : errorCheck
 
