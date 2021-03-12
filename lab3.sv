@@ -151,8 +151,8 @@ module SevenSegmentControl
   SevenSegmentDigit SSD1 (.bcd(BCD1), .segment(HEX1), .blank(turn_on));
   SevenSegmentDigit SSD2 (.bcd(BCD2), .segment(HEX2), .blank(turn_on));
   SevenSegmentDigit SSD3 (.bcd(BCD3), .segment(HEX3), .blank(turn_on));
-  SevenSegmentDigit SSD4 (.bcd(BCD4), .segment(HEX4), .blank(~turn_on));
-  SevenSegmentDigit SSD5 (.bcd(BCD5), .segment(HEX5), .blank(~turn_on));
+  SevenSegmentDigit SSD4 (.bcd(BCD4), .segment(HEX4), .blank(~turn_on)); //not used
+  SevenSegmentDigit SSD5 (.bcd(BCD5), .segment(HEX5), .blank(~turn_on)); //not used
   SevenSegmentDigit SSD6 (.bcd(BCD6), .segment(HEX6), .blank(turn_on));
   SevenSegmentDigit SSD7 (.bcd(BCD7), .segment(HEX7), .blank(turn_on));
   SevenSegmentDigit SSD8 (.bcd(BCD8), .segment(HEX8), .blank(turn_on));
