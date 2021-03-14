@@ -5,7 +5,7 @@ module SECDEDdecoder (input  logic [12:0] inCode,
                       output logic is1BitErr, is2BitErr,
                       output logic [12:0] outCode);
 
-
+  // instantiate all modules
   makeSyndrome dut1 (.codeWord(inCode), .*);
 
   makeCorrect dut2 ( .codeWord(inCode), .syndrome(syndrome),
@@ -20,6 +20,8 @@ endmodule:  SECDEDdecoder
 module makeSyndrome (input  logic [12:0] codeWord,
                      output logic [3:0] syndrome);
 
+
+  // use xor of different data and parity bits to obtain 4 bit syndrome
   assign syndrome[0] = codeWord[1] ^ codeWord[3] ^ codeWord[5] ^ codeWord[7] ^
                        codeWord[9] ^ codeWord[11];
 
@@ -42,12 +44,13 @@ module makeCorrect (input  logic [12:0] codeWord,
 
   logic PGfail;
 
+  // check for even or odd parity
   assign PGfail = ^codeWord;
 
   always_comb begin
 
   correctCodeWord = codeWord;
-
+  // change correct code based on cases
   if (PGfail === 1 && syndrome !== 4'b0000)
     correctCodeWord[syndrome] = ~codeWord[syndrome];
 
@@ -97,11 +100,13 @@ module errorCheck
 endmodule : errorCheck
 
 
-module BCDtoSevenSegment (input logic [3:0] bcd,
+module BCHtoSevenSegment (input logic [3:0] BCH,
                           output logic [6:0] segment);
 
+
+  // do all hex conversions with 4 bits
   always_comb
-    unique case (bcd[3:0])
+    unique case (BCH[3:0])
       4'b0000: segment = 7'b100_0000;
       4'b0001: segment = 7'b111_1001;
       4'b0010: segment = 7'b010_0100;
@@ -119,14 +124,14 @@ module BCDtoSevenSegment (input logic [3:0] bcd,
       4'b1110: segment = 7'b000_0110;
       4'b1111: segment = 7'b000_1110;
     endcase
-endmodule: BCDtoSevenSegment
+endmodule: BCHtoSevenSegment
 
-module SevenSegmentDigit (input logic [3:0] bcd,
+module SevenSegmentDigit (input logic [3:0] BCH,
                           output logic [6:0] segment, 
                           input logic blank);
   logic [6:0] decoded;
   
-  BCDtoSevenSegment b2ss(.bcd(bcd), .segment(decoded)); 
+  BCHtoSevenSegment b2ss(.BCH(BCH), .segment(decoded)); 
   // obtain for a specific digit
   always_comb begin
     if (blank)
@@ -140,23 +145,23 @@ endmodule: SevenSegmentDigit
 module SevenSegmentControl
   (output logic [6:0] HEX9, HEX8, HEX7, HEX6, HEX5,
    output logic [6:0] HEX4, HEX3, HEX2, HEX1, HEX0, 
-   input logic [3:0] BCD9, BCD8, BCD7, BCD6, BCD5, 
-   input logic [3:0] BCD4, BCD3, BCD2, BCD1, BCD0);
+   input logic [3:0] BCH9, BCH8, BCH7, BCH6, BCH5, 
+   input logic [3:0] BCH4, BCH3, BCH2, BCH1, BCH0);
   
 
   logic turn_on;
   assign turn_on = 0;
   // instantiate for 10 digits
-  SevenSegmentDigit SSD0 (.bcd(BCD0), .segment(HEX0), .blank(turn_on));
-  SevenSegmentDigit SSD1 (.bcd(BCD1), .segment(HEX1), .blank(turn_on));
-  SevenSegmentDigit SSD2 (.bcd(BCD2), .segment(HEX2), .blank(turn_on));
-  SevenSegmentDigit SSD3 (.bcd(BCD3), .segment(HEX3), .blank(turn_on));
-  SevenSegmentDigit SSD4 (.bcd(BCD4), .segment(HEX4), .blank(~turn_on)); //not used
-  SevenSegmentDigit SSD5 (.bcd(BCD5), .segment(HEX5), .blank(~turn_on)); //not used
-  SevenSegmentDigit SSD6 (.bcd(BCD6), .segment(HEX6), .blank(turn_on));
-  SevenSegmentDigit SSD7 (.bcd(BCD7), .segment(HEX7), .blank(turn_on));
-  SevenSegmentDigit SSD8 (.bcd(BCD8), .segment(HEX8), .blank(turn_on));
-  SevenSegmentDigit SSD9 (.bcd(BCD9), .segment(HEX9), .blank(turn_on));
+  SevenSegmentDigit SSD0 (.BCH(BCH0), .segment(HEX0), .blank(turn_on));
+  SevenSegmentDigit SSD1 (.BCH(BCH1), .segment(HEX1), .blank(turn_on));
+  SevenSegmentDigit SSD2 (.BCH(BCH2), .segment(HEX2), .blank(turn_on));
+  SevenSegmentDigit SSD3 (.BCH(BCH3), .segment(HEX3), .blank(turn_on));
+  SevenSegmentDigit SSD4 (.BCH(BCH4), .segment(HEX4), .blank(~turn_on)); //not used
+  SevenSegmentDigit SSD5 (.BCH(BCH5), .segment(HEX5), .blank(~turn_on)); //not used
+  SevenSegmentDigit SSD6 (.BCH(BCH6), .segment(HEX6), .blank(turn_on));
+  SevenSegmentDigit SSD7 (.BCH(BCH7), .segment(HEX7), .blank(turn_on));
+  SevenSegmentDigit SSD8 (.BCH(BCH8), .segment(HEX8), .blank(turn_on));
+  SevenSegmentDigit SSD9 (.BCH(BCH9), .segment(HEX9), .blank(turn_on));
 
 endmodule: SevenSegmentControl
 

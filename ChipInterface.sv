@@ -20,6 +20,8 @@ module ChipInterface
   assign LEDG[7:4] = syndrome; //green LED
   assign LEDG[0] = is1BitErr;  //green LED
   assign LEDG[1] = is2BitErr;  //red LED
+
+  // divide each data bits into two four bits so we can represent in hex
   
   assign inData1 = {inCode[12], inCode[11], inCode[10],
                     inCode[9]};
@@ -27,6 +29,7 @@ module ChipInterface
   assign inData0 = {inCode[7], inCode[6],
                    inCode[5], inCode[3]};
   
+  // do the same for outdata
   assign outData1 = {outCode[12], outCode[11], outCode[10],
                      outCode[9]};
   
@@ -38,11 +41,11 @@ module ChipInterface
                  
   SevenSegmentControl ssc(.HEX9, .HEX8, .HEX7, .HEX6, .HEX5,
                           .HEX4, .HEX3, .HEX2, .HEX1, .HEX0,
-                          .BCD9(inData1), .BCD8(inData0), .BCD7(outData1),
-                          .BCD6(outData0), .BCD5(4'b0000), .BCD4(4'b0000),
-                          .BCD3(outCode[12]), .BCD2(outCode[11:8]),
-                          .BCD1(outCode[7:4]), .BCD0(outCode[3:0]));
+                          .BCH9(inData1), .BCH8(inData0), .BCH7(outData1),
+                          .BCH6(outData0), .BCH5(4'b0000), .BCH4(4'b0000),
+                          .BCH3(outCode[12]), .BCH2(outCode[11:8]),
+                          .BCH1(outCode[7:4]), .BCH0(outCode[3:0]));
 
-                          //hard coded for BCD5 and BCD4
+                          //hard coded for BCH5 and BCH4
                      
 endmodule: ChipInterface
